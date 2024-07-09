@@ -1,0 +1,147 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "name": "Thinh",
+      "username": "a",
+      "password": "123"
+    },
+    {
+      "id": "2",
+      "name": "Phat",
+      "username": "b",
+      "password": "123"
+    },
+    {
+      "id": "3",
+      "name": "Hieu",
+      "username": "c",
+      "password": "123"
+    },
+    {
+      "id": "4",
+      "name": "quan",
+      "username": "d",
+      "password": "123"
+    },
+    {
+      "id": "5",
+      "name": "Quang",
+      "username": "e",
+      "password": "123"
+    }
+  ],
+  "todos": [
+    {
+      "id": "2",
+      "title": "Họp nhóm dự án",
+      "description": "Họp nhóm dự án để bàn về kế hoạch triển khai giai đoạn tiếp theo.",
+      "userId": "2",
+      "completed": true,
+      "priority": "Medium",
+      "dueDate": "2024-07-08T14:00:00"
+    },
+    {
+      "id": "3",
+      "title": "Kiểm tra email",
+      "description": "Kiểm tra và phản hồi các email quan trọng.",
+      "userId": " 3",
+      "completed": false,
+      "priority": "Low",
+      "dueDate": "2024-07-08T12:00:00"
+    },
+    {
+      "id": "4",
+      "title": "Chuẩn bị tài liệu thuyết trình",
+      "description": "Chuẩn bị tài liệu và slide cho buổi thuyết trình vào tuần sau.",
+      "userId": " 4",
+      "completed": true,
+      "priority": "High",
+      "dueDate": "2024-07-15T09:00:00"
+    },
+    {
+      "id": "5",
+      "title": "Đi họp công ty",
+      "description": "Đi họp công ty để cập nhật thông tin về các dự án mới.",
+      "userId": " 5",
+      "completed": false,
+      "priority": "Medium",
+      "dueDate": "2024-07-09T10:00:00"
+    },
+    {
+      "id": "1",
+      "title": "Hoàn thành báo cáo tài chính",
+      "description": "Hoàn thành báo cáo tài chính tháng 6 và gửi cho trưởng phòng.",
+      "userId": "1",
+      "completed": true,
+      "priority": "High",
+      "dueDate": "2024-07-10T09:00:00"
+    },
+    {
+      "id": "6",
+      "title": "qqq",
+      "description": "qqq",
+      "userId": "1",
+      "priority": "Low",
+      "dueDate": "2024-07-09T11:47",
+      "completed": true
+    },
+    {
+      "id": "7",
+      "title": "aa",
+      "description": "aaa",
+      "userId": "1",
+      "priority": "Medium",
+      "dueDate": "2024-07-05T11:49",
+      "completed": true
+    },
+    {
+      "id": "8",
+      "title": "aaaaa",
+      "description": "aa",
+      "userId": "1",
+      "priority": "Low",
+      "dueDate": "2024-07-07T11:52"
+    },
+    {
+      "id": "9",
+      "title": "aaa",
+      "description": "aaaa",
+      "userId": "1",
+      "priority": "Medium",
+      "dueDate": "2024-07-09T00:52"
+    },
+    {
+      "id": "10",
+      "title": "eee",
+      "description": "eee",
+      "userId": "1",
+      "priority": "Low",
+      "dueDate": "2024-07-07T11:52"
+    },
+    {
+      "id": "11",
+      "title": "h",
+      "description": "aaa",
+      "userId": "1",
+      "priority": "Medium",
+      "dueDate": "2024-07-09T01:55"
+    },
+    {
+      "id": "12",
+      "title": "H",
+      "description": "aaa",
+      "userId": "1",
+      "priority": "Medium",
+      "dueDate": "2024-07-04T00:55"
+    },
+    {
+      "id": "13",
+      "title": "11",
+      "description": "aaa",
+      "userId": "1",
+      "priority": "Low",
+      "dueDate": "2024-07-01T00:59"
+    }
+  ]
+}
