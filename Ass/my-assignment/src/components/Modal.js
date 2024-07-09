@@ -16,9 +16,7 @@ const Modal = ({
           <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">
-                  {selectedTodo ? "Edit Todo" : "Add Todo"}
-                </h5>
+                <h5 className="modal-title">{selectedTodo ? "Edit" : "Add"}</h5>
                 <button
                   type="button"
                   className="close"
