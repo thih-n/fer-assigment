@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Login";
 import TodoList from "./components/List";
@@ -38,7 +43,12 @@ function App() {
       const todosData = await todosResponse.json();
       const usersData = await usersResponse.json();
 
-      setTodos(todosData);
+      const updatedTodos = todosData.map((todo) => ({
+        ...todo,
+        failed: new Date(todo.dueDate) < new Date() && !todo.completed,
+      }));
+
+      setTodos(updatedTodos);
       setUsers(usersData);
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -46,8 +56,11 @@ function App() {
   };
 
   const getNextTodoId = () => {
-    const maxId = todos.length > 0 ? Math.max(...todos.map((todo) => todo.id)) : 0;
-    return maxId + 1;
+    const maxId =
+      todos.length > 0
+        ? Math.max(...todos.map((todo) => parseInt(todo.id, 10)))
+        : 0;
+    return (maxId + 1).toString();
   };
 
   const handleLoginChange = (e) => {
@@ -61,7 +74,8 @@ function App() {
   const handleLogin = (e) => {
     e.preventDefault();
     const user = users.find(
-      (u) => u.username === loginData.username && u.password === loginData.password
+      (u) =>
+        u.username === loginData.username && u.password === loginData.password
     );
     if (user) {
       setLoggedInUser(user);
@@ -87,15 +101,24 @@ function App() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (selectedTodo) {
+      const updatedTodo = {
+        ...formData,
+        id: selectedTodo.id,
+        userId: selectedTodo.userId,
+        completed: formData.completed || false,
+        failed: new Date(formData.dueDate) < new Date() && !formData.completed,
+      };
       await fetch(`http://localhost:3000/todos/${selectedTodo.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(updatedTodo),
       });
       setTodos((prevTodos) =>
-        prevTodos.map((todo) => (todo.id === selectedTodo.id ? formData : todo))
+        prevTodos.map((todo) =>
+          todo.id === selectedTodo.id ? updatedTodo : todo
+        )
       );
       setSelectedTodo(null);
     } else {
@@ -103,6 +126,8 @@ function App() {
         ...formData,
         id: getNextTodoId(),
         userId: loggedInUser.id,
+        completed: false,
+        failed: new Date(formData.dueDate) < new Date(),
       };
       const response = await fetch("http://localhost:3000/todos", {
         method: "POST",
@@ -131,7 +156,11 @@ function App() {
   const handleStatusChange = async (todoId) => {
     try {
       const updatedTodo = todos.find((todo) => todo.id === todoId);
-      const updated = { ...updatedTodo, completed: !updatedTodo.completed };
+      const updated = {
+        ...updatedTodo,
+        completed: !updatedTodo.completed,
+        failed: updatedTodo.completed ? updatedTodo.failed : false,
+      };
 
       await fetch(`http://localhost:3000/todos/${todoId}`, {
         method: "PUT",

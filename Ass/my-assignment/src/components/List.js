@@ -59,8 +59,9 @@ const List = ({
     (todo) =>
       (searchPriority === "" || todo.priority === searchPriority) &&
       (searchStatus === "" ||
-        (searchStatus === "Completed" && todo.completed) ||
-        (searchStatus === "Uncompleted" && !todo.completed))
+        (searchStatus === "Finished" && todo.completed) ||
+        (searchStatus === "Unfinished" && !todo.completed && !todo.failed) ||
+        (searchStatus === "Failed" && todo.failed))
   );
 
   return (
@@ -97,8 +98,9 @@ const List = ({
         onChange={handleSearchStatusChange}
       >
         <option value="">All Statuses</option>
-        <option value="Completed">Finished</option>
-        <option value="Uncompleted">Unfinished</option>
+        <option value="Finished">Finished</option>
+        <option value="Unfinished">Unfinished</option>
+        <option value="Failed">Failed</option>
       </select>
       <input
         type="text"
@@ -135,7 +137,13 @@ const List = ({
                 <td>{todo.description}</td>
                 <td>{todo.priority}</td>
                 <td>{new Date(todo.dueDate).toLocaleString()}</td>
-                <td>{todo.completed ? "Finished" : "Unfinished"}</td>
+                <td>
+                  {todo.failed
+                    ? "Failed"
+                    : todo.completed
+                    ? "Finished"
+                    : "Unfinished"}
+                </td>
                 <td>
                   <button
                     className="btn btn-warning mr-2"
