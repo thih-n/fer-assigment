@@ -8,6 +8,7 @@ const List = ({
   handleStatusChange,
   loggedInUser,
   resetForm,
+  handleLogout,
 }) => {
   const [sortedTodos, setSortedTodos] = useState([]);
   const [searchPriority, setSearchPriority] = useState("");
@@ -108,6 +109,9 @@ const List = ({
       />
       <button className="btn btn-primary mt-2" onClick={handleSearchTitle}>
         Search Title
+      </button>
+      <button className="btn btn-secondary mt-2 ml-2" onClick={handleLogout}>
+        Logout
       </button>
       <table className="table mt-3">
         <thead>

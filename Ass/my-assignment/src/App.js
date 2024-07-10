@@ -1,14 +1,10 @@
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Login";
 import TodoList from "./components/List";
 import Form from "./components/Form";
+import Signup from "./components/Signup";
 
 function App() {
   const [todos, setTodos] = useState([]);
@@ -50,8 +46,7 @@ function App() {
   };
 
   const getNextTodoId = () => {
-    const maxId =
-      todos.length > 0 ? Math.max(...todos.map((todo) => todo.id)) : 0;
+    const maxId = todos.length > 0 ? Math.max(...todos.map((todo) => todo.id)) : 0;
     return maxId + 1;
   };
 
@@ -66,8 +61,7 @@ function App() {
   const handleLogin = (e) => {
     e.preventDefault();
     const user = users.find(
-      (u) =>
-        u.username === loginData.username && u.password === loginData.password
+      (u) => u.username === loginData.username && u.password === loginData.password
     );
     if (user) {
       setLoggedInUser(user);
@@ -75,6 +69,11 @@ function App() {
     } else {
       alert("Invalid username or password");
     }
+  };
+
+  const handleLogout = () => {
+    setLoggedInUser(null);
+    localStorage.removeItem("loggedInUser");
   };
 
   const handleChange = (e) => {
@@ -161,6 +160,23 @@ function App() {
     setSelectedTodo(null);
   };
 
+  const handleSignup = async (signupData) => {
+    const newUser = {
+      ...signupData,
+      id: (users.length + 1).toString(),
+    };
+    const response = await fetch("http://localhost:3000/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newUser),
+    });
+    const addedUser = await response.json();
+    setUsers([...users, addedUser]);
+    alert("Sign up successful! Please log in.");
+  };
+
   return (
     <Router>
       <Routes>
@@ -189,6 +205,7 @@ function App() {
                 handleStatusChange={handleStatusChange}
                 loggedInUser={loggedInUser}
                 resetForm={resetForm}
+                handleLogout={handleLogout}
               />
             ) : (
               <Navigate to="/login" />
@@ -210,6 +227,10 @@ function App() {
               <Navigate to="/login" />
             )
           }
+        />
+        <Route
+          path="/signup"
+          element={<Signup handleSignup={handleSignup} />}
         />
         <Route path="/" element={<Navigate to="/login" />} />
       </Routes>

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Login = ({ loginData, handleLoginChange, handleLogin }) => {
   return (
@@ -31,6 +32,9 @@ const Login = ({ loginData, handleLoginChange, handleLogin }) => {
           Login
         </button>
       </form>
+      <p className="mt-3">
+        Don't have an account? <Link to="/signup">Sign up</Link>
+      </p>
     </div>
   );
 };
