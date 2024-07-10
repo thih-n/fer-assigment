@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./components/Login";
 import TodoList from "./components/List";
-import Modal from "./components/Modal";
+import Form from "./components/Form";
 
 function App() {
   const [todos, setTodos] = useState([]);
   const [users, setUsers] = useState([]);
   const [selectedTodo, setSelectedTodo] = useState(null);
-  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -21,24 +26,12 @@ function App() {
     username: "",
     password: "",
   });
-  const [sortedTodos, setSortedTodos] = useState([]);
-  const [searchPriority, setSearchPriority] = useState("");
-  const [searchStatus, setSearchStatus] = useState("");
-  const [searchTitle, setSearchTitle] = useState("");
 
   useEffect(() => {
+    const user = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (user) setLoggedInUser(user);
     callApi();
   }, []);
-
-  useEffect(() => {
-    if (!showModal) {
-      resetForm();
-    }
-  }, [showModal]);
-
-  useEffect(() => {
-    setSortedTodos([...todos]);
-  }, [todos]);
 
   const callApi = async () => {
     try {
@@ -62,47 +55,12 @@ function App() {
     return maxId + 1;
   };
 
-  const sortByTitle = () => {
-    const sorted = [...sortedTodos].sort((a, b) => {
-      if (a.title[0].toLowerCase() < b.title[0].toLowerCase()) return -1;
-      if (a.title[0].toLowerCase() > b.title[0].toLowerCase()) return 1;
-      return a.title.length - b.title.length;
-    });
-    setSortedTodos(sorted);
-  };
-
-  const sortByDate = () => {
-    const sorted = [...sortedTodos].sort(
-      (a, b) => new Date(a.dueDate) - new Date(b.dueDate)
-    );
-    setSortedTodos(sorted);
-  };
-
-  const handleSearchPriorityChange = (e) => {
-    setSearchPriority(e.target.value);
-  };
-
-  const handleSearchStatusChange = (e) => {
-    setSearchStatus(e.target.value);
-  };
-
-  const handleSearchTitleChange = (e) => {
-    setSearchTitle(e.target.value);
-  };
-
-  const handleSearchTitle = () => {
-    const filtered = todos.filter((todo) =>
-      todo.title.toLowerCase().includes(searchTitle.toLowerCase())
-    );
-    setSortedTodos(filtered);
-  };
-
   const handleLoginChange = (e) => {
     const { name, value } = e.target;
-    setLoginData({
-      ...loginData,
+    setLoginData((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
   };
 
   const handleLogin = (e) => {
@@ -113,6 +71,7 @@ function App() {
     );
     if (user) {
       setLoggedInUser(user);
+      localStorage.setItem("loggedInUser", JSON.stringify(user));
     } else {
       alert("Invalid username or password");
     }
@@ -156,13 +115,11 @@ function App() {
       const addedTodo = await response.json();
       setTodos([...todos, addedTodo]);
     }
-    setShowModal(false); // Close the modal after submitting the form
   };
 
   const handleEdit = (todo) => {
     setSelectedTodo(todo);
     setFormData(todo);
-    setShowModal(true); // Show the modal when editing
   };
 
   const handleDelete = async (todoId) => {
@@ -204,94 +161,59 @@ function App() {
     setSelectedTodo(null);
   };
 
-  const closeModal = () => {
-    setShowModal(false);
-  };
-
-  const filteredTodos = sortedTodos.filter(
-    (todo) =>
-      (searchPriority === "" || todo.priority === searchPriority) &&
-      (searchStatus === "" ||
-        (searchStatus === "Completed" && todo.completed) ||
-        (searchStatus === "Uncompleted" && !todo.completed))
-  );
-
-  if (!loggedInUser) {
-    return (
-      <Login
-        loginData={loginData}
-        handleLoginChange={handleLoginChange}
-        handleLogin={handleLogin}
-      />
-    );
-  }
-
   return (
-    <div className="container">
-      <h2>{loggedInUser.name}'s Todo List</h2>
-      <button
-        className="btn btn-primary"
-        onClick={() => {
-          setSelectedTodo(null);
-          setShowModal(true); // Show the modal when adding
-        }}
-      >
-        Add
-      </button>
-      <button className="btn btn-primary ml-2" onClick={sortByTitle}>
-        Sort by Title
-      </button>
-      <button className="btn btn-primary ml-2" onClick={sortByDate}>
-        Sort by Date
-      </button>
-      <select
-        className="form-control mt-2"
-        value={searchPriority}
-        onChange={handleSearchPriorityChange}
-      >
-        <option value="">All Priorities</option>
-        <option value="Low">Low</option>
-        <option value="Medium">Medium</option>
-        <option value="High">High</option>
-      </select>
-      <select
-        className="form-control mt-2"
-        value={searchStatus}
-        onChange={handleSearchStatusChange}
-      >
-        <option value="">All Statuses</option>
-        <option value="Completed">Finished</option>
-        <option value="Uncompleted">Unfinished</option>
-      </select>
-      <input
-        type="text"
-        className="form-control mt-2"
-        value={searchTitle}
-        onChange={handleSearchTitleChange}
-        placeholder="Search by Title"
-      />
-      <button className="btn btn-primary mt-2" onClick={handleSearchTitle}>
-        Search Title
-      </button>
-
-      <Modal
-        showModal={showModal}
-        formData={formData}
-        handleChange={handleChange}
-        handleSubmit={handleSubmit}
-        selectedTodo={selectedTodo}
-        resetForm={resetForm}
-        closeModal={closeModal}
-      />
-
-      <TodoList
-        todos={filteredTodos}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-        handleStatusChange={handleStatusChange}
-        loggedInUser={loggedInUser}
-      />
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/login"
+          element={
+            !loggedInUser ? (
+              <Login
+                loginData={loginData}
+                handleLoginChange={handleLoginChange}
+                handleLogin={handleLogin}
+              />
+            ) : (
+              <Navigate to="/list" />
+            )
+          }
+        />
+        <Route
+          path="/list"
+          element={
+            loggedInUser ? (
+              <TodoList
+                todos={todos}
+                handleEdit={handleEdit}
+                handleDelete={handleDelete}
+                handleStatusChange={handleStatusChange}
+                loggedInUser={loggedInUser}
+                resetForm={resetForm}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/add"
+          element={
+            loggedInUser ? (
+              <Form
+                formData={formData}
+                handleChange={handleChange}
+                handleSubmit={handleSubmit}
+                selectedTodo={selectedTodo}
+                resetForm={resetForm}
+              />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route path="/" element={<Navigate to="/login" />} />
+      </Routes>
+    </Router>
   );
 }
 
